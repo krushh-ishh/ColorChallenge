@@ -3,6 +3,7 @@ package com.fun.codechallenge_app;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.view.View;
@@ -20,7 +21,7 @@ public class ColorActivity extends AppCompatActivity implements View.OnClickList
 
     private Button button1, button2, button3, button4;
     private ImageButton pausePlayBtn;
-    private TextView score, level;
+    private TextView score, level, colorValue;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,19 +34,47 @@ public class ColorActivity extends AppCompatActivity implements View.OnClickList
     }
 
     private void gamePlay() {
+        //set color in textView
+
         button1.setOnClickListener(this);
         button2.setOnClickListener(this);
         button3.setOnClickListener(this);
         button4.setOnClickListener(this);
     }
+
     @Override
     public void onClick(View v) {
+
+        Button b = setRandomButtonColor();
+        if(b.getId() == v.getId()){
+            Toast.makeText(this, "matched", Toast.LENGTH_SHORT).show();
+        }
+        else
+            Toast.makeText(this, "not matched", Toast.LENGTH_SHORT).show();
+
+    }
+
+    private Button setRandomButtonColor() {
         List<String> colors = Arrays.asList("#FBFE7A", "#FF8D8D", "#7BCFCF", "#999DE7");
         Collections.shuffle(colors);
+        //generate random index `
+        colorValue.setBackgroundColor(Color.parseColor(colors.get(0)));
+        String chosenColor = colors.get(0);
+
+        Collections.shuffle(colors);
+        int index = colors.indexOf(chosenColor);
         button1.setBackgroundColor(Color.parseColor(colors.get(0)));
         button2.setBackgroundColor(Color.parseColor(colors.get(1)));
         button3.setBackgroundColor(Color.parseColor(colors.get(2)));
         button4.setBackgroundColor(Color.parseColor(colors.get(3)));
+
+        switch(index) {
+            case 0 : return button1;
+            case 1 : return button2;
+            case 2 : return button3;
+            case 3 : return button4;
+            default: return null;
+        }
     }
 
     private void initView() {
@@ -56,7 +85,10 @@ public class ColorActivity extends AppCompatActivity implements View.OnClickList
 
         score = findViewById(R.id.score);
         level = findViewById(R.id.level);
+        colorValue = findViewById(R.id.colorValue);
 
         pausePlayBtn = findViewById(R.id.pausePlay);
+
+        setRandomButtonColor();
     }
 }
