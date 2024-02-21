@@ -12,13 +12,15 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.Console;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
 public class ColorActivity extends AppCompatActivity implements View.OnClickListener{
-
+    private Button b;
+    int scoreValue = 0;
     private Button button1, button2, button3, button4;
     private ImageButton pausePlayBtn;
     private TextView score, level, colorValue;
@@ -44,14 +46,15 @@ public class ColorActivity extends AppCompatActivity implements View.OnClickList
 
     @Override
     public void onClick(View v) {
-
-        Button b = setRandomButtonColor();
         if(b.getId() == v.getId()){
-            Toast.makeText(this, "matched", Toast.LENGTH_SHORT).show();
+//            CharSequence x = score.getText();
+//            x += " x ";
+//            scoreValue += 100;
+//            score.setText();
         }
         else
-            Toast.makeText(this, "not matched", Toast.LENGTH_SHORT).show();
-
+            Toast.makeText(this, "not matched" +b, Toast.LENGTH_SHORT).show();
+        b = setRandomButtonColor();
     }
 
     private Button setRandomButtonColor() {
@@ -84,11 +87,12 @@ public class ColorActivity extends AppCompatActivity implements View.OnClickList
         button4 = findViewById(R.id.button4);
 
         score = findViewById(R.id.score);
+        score.setText("0");
         level = findViewById(R.id.level);
         colorValue = findViewById(R.id.colorValue);
 
         pausePlayBtn = findViewById(R.id.pausePlay);
 
-        setRandomButtonColor();
+        b = setRandomButtonColor();
     }
 }
