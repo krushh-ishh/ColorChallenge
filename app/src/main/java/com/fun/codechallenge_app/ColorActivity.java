@@ -5,6 +5,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.SystemClock;
 import android.provider.MediaStore;
 import android.view.View;
 import android.widget.Button;
@@ -13,9 +15,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.Console;
+import java.sql.Time;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 public class ColorActivity extends AppCompatActivity implements View.OnClickListener{
@@ -24,7 +28,8 @@ public class ColorActivity extends AppCompatActivity implements View.OnClickList
     private Button button1, button2, button3, button4;
     private ImageButton pausePlayBtn;
     private TextView score, level, colorValue;
-
+    private final int interval = 5000; // 1 Second
+    long currentTime = System.currentTimeMillis() + 60 * interval;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -36,25 +41,48 @@ public class ColorActivity extends AppCompatActivity implements View.OnClickList
     }
 
     private void gamePlay() {
-        //set color in textView
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                while(true){
+                    try {
+                        Thread.sleep(100);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                   checkIfClicked();
+                }
+            }
 
+            private void checkIfClicked() {
+                if(currentTime < SystemClock.uptimeMillis()) {
+                    setRandomButtonColor();
+                    currentTime = SystemClock.uptimeMillis() + interval;
+//                    givenotification
+                    //stop application
+                }
+            }
+        }).start();
         button1.setOnClickListener(this);
         button2.setOnClickListener(this);
         button3.setOnClickListener(this);
         button4.setOnClickListener(this);
+
     }
 
     @Override
     public void onClick(View v) {
         if(b.getId() == v.getId()){
-//            CharSequence x = score.getText();
-//            x += " x ";
-//            scoreValue += 100;
-//            score.setText();
+            scoreValue += 500;
+            //score should be updated based on how early clicked
+            score.setText(String.valueOf(scoreValue));
+            Toast.makeText(this, "matched", Toast.LENGTH_SHORT).show();
         }
-        else
-            Toast.makeText(this, "not matched" +b, Toast.LENGTH_SHORT).show();
+        else {
+            Toast.makeText(this, "not matched", Toast.LENGTH_SHORT).show();
+        }
         b = setRandomButtonColor();
+        currentTime = SystemClock.uptimeMillis() + interval;
     }
 
     private Button setRandomButtonColor() {
@@ -87,7 +115,7 @@ public class ColorActivity extends AppCompatActivity implements View.OnClickList
         button4 = findViewById(R.id.button4);
 
         score = findViewById(R.id.score);
-        score.setText("0");
+        score.setText(String.valueOf(scoreValue));
         level = findViewById(R.id.level);
         colorValue = findViewById(R.id.colorValue);
 
