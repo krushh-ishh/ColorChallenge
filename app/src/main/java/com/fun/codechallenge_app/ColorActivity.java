@@ -17,7 +17,7 @@ import java.util.List;
 
 public class ColorActivity extends AppCompatActivity implements View.OnClickListener{
     private Button b;
-    int scoreValue = 0;
+    int scoreValue = 0, levelValue = 1;
     private Button button1, button2, button3, button4;
     private ImageButton pausePlayBtn;
     private TextView score, level, colorValue;
@@ -49,10 +49,7 @@ public class ColorActivity extends AppCompatActivity implements View.OnClickList
 
             private void checkIfClicked() {
                 if(currentTime < SystemClock.uptimeMillis()) {
-                    setRandomButtonColor();
-                    currentTime = SystemClock.uptimeMillis() + interval;
-//                    givenotification
-                    //stop application
+                    endGame();
                 }
             }
         }).start();
@@ -72,10 +69,18 @@ public class ColorActivity extends AppCompatActivity implements View.OnClickList
             Toast.makeText(this, "matched", Toast.LENGTH_SHORT).show();
         }
         else {
-            Toast.makeText(this, "not matched", Toast.LENGTH_SHORT).show();
+            endGame();
         }
         b = setRandomButtonColor();
         currentTime = SystemClock.uptimeMillis() + interval;
+    }
+
+    private void endGame() {
+        TimeIsUp fragmentB = new TimeIsUp();
+        getSupportFragmentManager().beginTransaction()
+                .add(R.id.container, fragmentB)
+                .addToBackStack(TimeIsUp.class.getSimpleName())
+                .commit();
     }
 
     private Button setRandomButtonColor() {
@@ -110,6 +115,7 @@ public class ColorActivity extends AppCompatActivity implements View.OnClickList
         score = findViewById(R.id.score);
         score.setText(String.valueOf(scoreValue));
         level = findViewById(R.id.level);
+        level.setText(String.valueOf(levelValue));
         colorValue = findViewById(R.id.colorValue);
 
         pausePlayBtn = findViewById(R.id.pausePlay);
