@@ -21,8 +21,8 @@ public class ColorActivity extends AppCompatActivity implements View.OnClickList
     private Button button1, button2, button3, button4;
     private ImageButton pausePlayBtn;
     private TextView score, level, colorValue;
-    private final int interval = 5000; // 1 Second
-    long currentTime = System.currentTimeMillis() + 60 * interval;
+    private final int interval = 5000; // 5 Second
+    long clickedTim = SystemClock.uptimeMillis() + interval;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -34,25 +34,7 @@ public class ColorActivity extends AppCompatActivity implements View.OnClickList
     }
 
     private void gamePlay() {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                while(true){
-                    try {
-                        Thread.sleep(100);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                   checkIfClicked();
-                }
-            }
 
-            private void checkIfClicked() {
-                if(currentTime < SystemClock.uptimeMillis()) {
-                    endGame();
-                }
-            }
-        }).start();
         button1.setOnClickListener(this);
         button2.setOnClickListener(this);
         button3.setOnClickListener(this);
@@ -63,16 +45,35 @@ public class ColorActivity extends AppCompatActivity implements View.OnClickList
     @Override
     public void onClick(View v) {
         if(b.getId() == v.getId()){
-            scoreValue += 500;
+            scoreValue += ((clickedTim - SystemClock.uptimeMillis()) * 5);
             //score should be updated based on how early clicked
             score.setText(String.valueOf(scoreValue));
+            b = setRandomButtonColor();
+            clickedTim = SystemClock.uptimeMillis() + interval;
             Toast.makeText(this, "matched", Toast.LENGTH_SHORT).show();
         }
         else {
             endGame();
         }
-        b = setRandomButtonColor();
-        currentTime = SystemClock.uptimeMillis() + interval;
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                while(true){
+                    try {
+                        Thread.sleep(100);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    checkIfClicked();
+                }
+            }
+
+            private void checkIfClicked() {
+                if(clickedTim < SystemClock.uptimeMillis()) {
+                    endGame();
+                }
+            }
+        }).start();
     }
 
     private void endGame() {
